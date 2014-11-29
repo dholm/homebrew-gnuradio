@@ -6,7 +6,7 @@ class Gnuradio < Formula
   url "http://gnuradio.org/releases/gnuradio/gnuradio-3.7.5.1.tar.gz"
   sha1 "ccb66c462aff098bcdace60e52aad64439177b48"
 
-  option 'with-qt', 'Build with exta GUI features that use QT'
+  option "with-qt", "Build with QT widgets in addition to wxWidgets"
   option "with-docs", "Build gnuradio documentation"
   option "with-brewed-python", "Use the Homebrew version of Python"
 
@@ -37,26 +37,23 @@ class Gnuradio < Formula
 
   depends_on :fortran => :build
   depends_on "cmake" => :build
-  depends_on 'matplotlib' => :python
-  depends_on 'boost'
-  depends_on 'cppunit'
-  depends_on 'gsl'
-  depends_on 'fftw'
-  depends_on 'swig' => :build
-  depends_on 'pygtk'
-  depends_on 'sdl'
-  depends_on 'libusb'
-  depends_on 'orc'
-  depends_on 'pyqt' if build.with? "qt"
-  depends_on 'pyqwt' if build.with? "qt"
+  depends_on "matplotlib" => :python
+  depends_on "boost"
+  depends_on "cppunit"
+  depends_on "gsl"
+  depends_on "fftw"
+  depends_on "swig" => :build
+  depends_on "pygtk"
+  depends_on "sdl"
+  depends_on "libusb"
+  depends_on "orc"
+  depends_on "pyqt" if build.with? "qt"
+  depends_on "pyqwt" if build.with? "qt"
   depends_on 'sphinx' if build.with? "docs"
-  depends_on 'wxpython'
-  depends_on 'wxmac'
+  depends_on "wxpython"
+  depends_on "wxmac"
 
   def install
-    ENV['CMAKE_C_COMPILER'] = '#{ENV.cc}'
-    ENV['CMAKE_CXX_COMPILER'] = '#{ENV.cxx}'
-
     ENV.prepend_create_path "PYTHONPATH", libexec/"lib/python2.7/site-packages"
     python_args = ["install", "--prefix=#{libexec}"]
     %w[Cheetah lxml].each do |r|
@@ -73,7 +70,10 @@ class Gnuradio < Formula
       end
     end
 
-    mkdir 'build' do
+    mkdir "build" do
+      ENV["CMAKE_C_COMPILER"] = "#{ENV.cc}"
+      ENV["CMAKE_CXX_COMPILER"] = "#{ENV.cxx}"
+
       args = %W[
         -DCMAKE_PREFIX_PATH=#{prefix}
         -DENABLE_DOXYGEN=Off
@@ -94,10 +94,9 @@ class Gnuradio < Formula
         args << "-DENABLE_GR_QTGUI=OFF"
       end
 
-
-    system "cmake", "..", *args, *std_cmake_args
-    system "make"
-    system "make install"
+      system "cmake", "..", *args, *std_cmake_args
+      system "make"
+      system "make install"
+    end
   end
-  end
- end
+end
